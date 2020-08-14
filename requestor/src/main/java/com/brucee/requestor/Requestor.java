@@ -1,15 +1,12 @@
 package com.brucee.requestor;
 
 public class Requestor {
-    public static void single() {
+
+    protected static void startAsyncWork() {
 
     }
 
-    public static void list() {
-
-    }
-
-    public static void multi() {
+    protected static void doApiRequest() {
 
     }
 }
