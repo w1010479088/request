@@ -1,2 +1,3 @@
+include ':requestor'
 include ':app'
 rootProject.name = "request"
