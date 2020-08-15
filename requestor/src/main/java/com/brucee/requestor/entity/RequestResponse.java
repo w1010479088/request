@@ -1,24 +1,49 @@
 package com.brucee.requestor.entity;
 
-public class RequestResponse {
+public class RequestResponse<T> {
     private boolean success;
     private int code;
     private String msg;
-    private String mainData;
+    private String json;
+    private T data;
 
-    public boolean success() {
+    public boolean isSuccess() {
         return success;
     }
 
-    public int code() {
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
+    public int getCode() {
         return code;
     }
 
-    public String msg() {
+    public void setCode(int code) {
+        this.code = code;
+    }
+
+    public String getMsg() {
         return msg;
     }
 
-    public String mainData() {
-        return mainData;
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getJson() {
+        return json;
+    }
+
+    public void setJson(String json) {
+        this.json = json;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }
