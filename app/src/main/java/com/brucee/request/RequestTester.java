@@ -28,7 +28,7 @@ public class RequestTester extends Requestor {
             if (response.isSuccess()) {
                 return response.getData();
             } else {
-                String json = response.getJson();
+                sendError(response.getErrorMessage());
             }
             return null;
         }, listener);

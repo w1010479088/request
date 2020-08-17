@@ -31,6 +31,13 @@ public class RequestResponse<T> {
         this.msg = msg;
     }
 
+    public ErrorMessage getErrorMessage() {
+        ErrorMessage errorMsg = new ErrorMessage();
+        errorMsg.setCode(code);
+        errorMsg.setMsg(this.msg);
+        return errorMsg;
+    }
+
     public String getJson() {
         return json;
     }
