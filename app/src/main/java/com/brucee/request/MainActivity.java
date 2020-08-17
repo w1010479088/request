@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.brucee.requestor.RequestTester;
 import com.brucee.requestor.entity.ErrorMessage;
 import com.brucee.requestor.entity.OnRequestListener;
 import com.google.gson.Gson;

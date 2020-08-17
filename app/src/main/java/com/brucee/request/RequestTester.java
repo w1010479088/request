@@ -1,5 +1,6 @@
-package com.brucee.requestor;
+package com.brucee.request;
 
+import com.brucee.requestor.Requestor;
 import com.brucee.requestor.entity.OnRequestListener;
 import com.brucee.requestor.entity.RequestBridge;
 import com.brucee.requestor.entity.RequestResponse;
