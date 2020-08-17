@@ -24,22 +24,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import okhttp3.Call;
-import okhttp3.MultipartBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class Requestor {
+    private static final ThreadLocal<ErrorMessage> local = new ThreadLocal();
 
     public static void asyncWork(final AsyncWork action, final OnRequestListener listener) {
         work(() -> {
             try {
                 main(listener::onStart);
                 final Object result = action.doWork();
-                main(() -> listener.onSuccess(result));
+                main(() -> {
+                    if (local.get() == null) {
+                        listener.onSuccess(result);
+                    } else {
+                        listener.onFail(local.get());
+                    }
+                });
             } catch (Exception ex) {
                 RequestBridge.logger.log(ex.getMessage());
                 final ErrorMessage errorMsg = new ErrorMessage();
@@ -47,6 +54,7 @@ public class Requestor {
                 errorMsg.setMsg(ex.getMessage());
                 main(() -> listener.onFail(errorMsg));
             } finally {
+                local.remove();
                 main(listener::onFinish);
             }
         });
@@ -59,11 +67,7 @@ public class Requestor {
             Request.Builder builder = new Request
                     .Builder()
                     .url(RequestBridge.host + path);
-
-            if (params != null && !params.isEmpty()) {
-                builder.post(configParams(params));
-            }
-
+            builder.post(configParams(params));
             configHeaders(builder);
 
             Call call = RequestClient.client().newCall(builder.build());
@@ -87,6 +91,10 @@ public class Requestor {
         }
     }
 
+    public static void sendError(ErrorMessage msg) {
+        local.set(msg);
+    }
+
     private static Object parseJson(String body, Class clazz) throws Exception {
         JsonElement jsonElement = JsonParser.parseString(body);
         JsonObject jsonObj = jsonElement.getAsJsonObject();
@@ -106,19 +114,23 @@ public class Requestor {
         }
     }
 
-    private static MultipartBody configParams(Map<String, String> params) {
-        MultipartBody.Builder body = new MultipartBody.Builder();
-        body.setType(MultipartBody.FORM);
-        if (params != null) {
+    private static RequestBody configParams(Map<String, String> params) {
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded;charset=UTF-8");
+        StringBuilder paramsBuilder = new StringBuilder("");
+        if (params != null && !params.isEmpty()) {
             Set<Map.Entry<String, String>> entries = params.entrySet();
             for (Map.Entry<String, String> item : entries) {
                 String value = item.getValue();
                 if (!TextUtils.isEmpty(value)) {
-                    body.addFormDataPart(item.getKey(), value);
+                    paramsBuilder.append(item.getKey().trim());
+                    paramsBuilder.append("=");
+                    paramsBuilder.append(value);
+                    paramsBuilder.append("&");
                 }
             }
+            paramsBuilder.setLength(paramsBuilder.length() - 1);
         }
-        return body.build();
+        return RequestBody.create(mediaType, paramsBuilder.toString());
     }
 
     private static void configHeaders(Request.Builder builder) {
