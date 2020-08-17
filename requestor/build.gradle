@@ -49,7 +49,7 @@ publish {
     repoName = 'maven'
     groupId = 'com.brucee'
     artifactId = 'requestor'
-    publishVersion = '1.0.1'
+    publishVersion = '1.1.0'
     desc = '网络请求'
     website = "https://gitee.com/dajunzi12138_admin/AndroidTesting.git"
     bintrayUser = 'w1010479088'
