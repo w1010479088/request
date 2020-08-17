@@ -95,7 +95,7 @@ public class Requestor {
         local.set(msg);
     }
 
-    private static Object parseJson(String body, Class clazz) throws Exception {
+    private static Object parseJson(String body, Class clazz) {
         JsonElement jsonElement = JsonParser.parseString(body);
         JsonObject jsonObj = jsonElement.getAsJsonObject();
         JsonElement jsonData = jsonObj.get("data");
